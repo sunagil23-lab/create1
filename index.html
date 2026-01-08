@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Product Prompt Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --yellow1: #fff2a8;
+  --yellow2: #ffd54f;
+  --black: #0b0b0b;
+  --panel-bg: rgba(0,0,0,0.65);
+  --border: rgba(255,255,255,0.08);
+  --text: #f5f5f5;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #000;
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* === PARALLAX BACKGROUND === */
+.bg {
+  position: fixed;
+  inset: 0;
+  background: url("bg.jpg") center / cover no-repeat;
+  transform: scale(1.05);
+  transition: transform 0.1s linear;
+  z-index: -2;
+}
+
+.bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+}
+
+/* === LAYOUT === */
+.wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  width: 1100px;
+  max-width: 92%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* === PANELS === */
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  backdrop-filter: blur(10px);
+}
+
+.panel h2 {
+  margin: 0 0 16px;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+/* === SELECTS === */
+label {
+  display: block;
+  font-size: 12px;
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+select {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+
+select option {
+  color: black;
+}
+
+/* === BUTTONS === */
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+  background: linear-gradient(135deg, var(--yellow1), var(--yellow2));
+  color: #000;
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+/* === PROMPT AREA === */
+textarea {
+  width: 100%;
+  height: 420px;
+  resize: none;
+  padding: 16px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  color: #f1f1f1;
+  font-size: 13px;
+  line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg" id="bg"></div>
+
+<div class="wrapper">
+  <div class="container">
+
+    <!-- LEFT PANEL -->
+    <div class="panel">
+      <h2>Prompt Options</h2>
+
+      <label>Camera / View</label>
+      <select id="camera">
+        <option value="">— none —</option>
+        <option value="top">Top-down view</option>
+        <option value="left">Left-side view</option>
+        <option value="right">Right-side view</option>
+        <option value="low">Low angle (base aligned)</option>
+        <option value="wide">Wide shot</option>
+        <option value="macro">Extreme close-up</option>
+      </select>
+
+      <label>Lens</label>
+      <select id="lens">
+        <option value="">— none —</option>
+        <option value="product">Product photography lens</option>
+        <option value="macro">Macro lens</option>
+        <option value="blur">Shallow depth of field</option>
+      </select>
+
+      <label>Lighting</label>
+      <select id="light">
+        <option value="">— none —</option>
+        <option value="studio">Studio spotlight</option>
+        <option value="natural">Natural professional light</option>
+      </select>
+
+      <label>Style / Effect</label>
+      <select id="style">
+        <option value="">— none —</option>
+        <option value="cinematic">Cinematic</option>
+        <option value="bw">Black & White</option>
+        <option value="retro">1930s Retro</option>
+      </select>
+
+      <button onclick="buildPrompt()">Prompt Oluştur</button>
+      <button onclick="copyPrompt()">Promptu Kopyala</button>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="panel">
+      <h2>Generated Prompt</h2>
+      <textarea id="output" readonly></textarea>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* === PARALLAX === */
+document.addEventListener("mousemove", e => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 10;
+  const y = (e.clientY / window.innerHeight - 0.5) * 10;
+  document.getElementById("bg").style.transform =
+    `scale(1.08) translate(${x}px, ${y}px)`;
+});
+
+/* === PROMPT BUILDER === */
+function buildPrompt() {
+  let prompt = `
+Use this image as reference.
+
+Keep the same product and packaging.
+All text and logos must remain readable.
+
+Ultra high-resolution, 8K quality.
+Professional commercial photography.
+`;
+
+  const camera = document.getElementById("camera").value;
+  const lens = document.getElementById("lens").value;
+  const light = document.getElementById("light").value;
+  const style = document.getElementById("style").value;
+
+  if (camera === "top") prompt += "\nTop-down view.\nThe camera looks directly down at the product.\n";
+  if (camera === "left") prompt += "\nLeft-side view of the product.\n";
+  if (camera === "right") prompt += "\nRight-side view of the product.\n";
+  if (camera === "low") prompt += "\nLow angle shot.\nThe camera is aligned with the base of the product.\n";
+  if (camera === "wide") prompt += "\nWide shot.\nThe product appears smaller in frame.\n";
+  if (camera === "macro") prompt += "\nExtreme close-up.\nSurface textures are clearly visible.\n";
+
+  if (lens === "product") prompt += "\nShot with a professional product photography lens.\n";
+  if (lens === "macro") prompt += "\nMacro lens photography.\nShallow depth of field.\n";
+  if (lens === "blur") prompt += "\nShallow depth of field.\nBackground softly blurred.\n";
+
+  if (light === "studio") prompt += "\nStudio lighting.\nFocused spotlight on the product.\nSoft shadows.\n";
+  if (light === "natural") prompt += "\nNatural lighting.\nHigh-end commercial photography.\n";
+
+  if (style === "cinematic") prompt += "\nCinematic color grading.\nBalanced contrast.\n";
+  if (style === "bw") prompt += "\nBlack and white photography.\nSubtle film grain.\nHigh contrast.\n";
+  if (style === "retro") prompt += "\n1930s vintage photography style.\nVisible film grain.\nSlight color fade.\n";
+
+  document.getElementById("output").value = prompt.trim();
+}
+
+function copyPrompt() {
+  const area = document.getElementById("output");
+  area.select();
+  document.execCommand("copy");
+}
+</script>
+
+</body>
+</html>
