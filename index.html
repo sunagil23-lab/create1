@@ -1,132 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<title>Product Prompt Builder</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>AI Product Prompt Builder</title>
 
 <style>
-:root {
-  --yellow1: #fff2a8;
-  --yellow2: #ffd54f;
-  --black: #0b0b0b;
-  --panel-bg: rgba(0,0,0,0.65);
-  --border: rgba(255,255,255,0.08);
-  --text: #f5f5f5;
-}
-
+/* RESET */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   font-family: Inter, system-ui, sans-serif;
 }
 
 body {
-  margin: 0;
   min-height: 100vh;
   background: #000;
-  color: var(--text);
-  overflow: hidden;
+  color: #fff;
+  overflow-x: hidden;
 }
 
-/* === PARALLAX BACKGROUND === */
+/* PARALLAX BACKGROUND */
 .bg {
   position: fixed;
   inset: 0;
   background: url("bg.jpg") center / cover no-repeat;
-  transform: scale(1.05);
-  transition: transform 0.1s linear;
   z-index: -2;
+  will-change: transform;
 }
 
 .bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0,0,0,0.45);
 }
 
-/* === LAYOUT === */
+/* MAIN CONTAINER */
 .wrapper {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 80px 40px;
 }
 
 .container {
-  width: 1100px;
-  max-width: 92%;
+  width: 100%;
+  max-width: 1200px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 28px;
 }
 
-/* === PANELS === */
+/* PANELS */
 .panel {
-  background: var(--panel-bg);
-  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.7);
   border-radius: 18px;
-  padding: 22px;
-  backdrop-filter: blur(10px);
+  padding: 26px;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-.panel h2 {
-  margin: 0 0 16px;
+/* TITLES */
+h2 {
   font-size: 18px;
-  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+  color: #ffd84d;
 }
 
-/* === SELECTS === */
-label {
+/* OPTIONS */
+.option-group {
+  margin-bottom: 18px;
+}
+
+.option-group label {
   display: block;
-  font-size: 12px;
-  opacity: 0.75;
-  margin-bottom: 6px;
+  font-size: 13px;
+  margin-bottom: 8px;
+  opacity: 0.85;
 }
 
-select {
-  width: 100%;
-  margin-bottom: 14px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.05);
-  color: white;
-}
-
-select option {
-  color: black;
-}
-
-/* === BUTTONS === */
-button {
+.option-group select {
   width: 100%;
   padding: 12px;
-  border-radius: 14px;
+  border-radius: 10px;
   border: none;
-  cursor: pointer;
+  background: #111;
+  color: #fff;
+  outline: none;
+}
+
+/* BUTTONS */
+button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
   font-weight: 600;
-  margin-top: 10px;
-  background: linear-gradient(135deg, var(--yellow1), var(--yellow2));
+  cursor: pointer;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #ffd84d, #ffb800);
   color: #000;
 }
 
-button:hover {
-  filter: brightness(1.05);
+button.secondary {
+  background: #111;
+  color: #ffd84d;
+  border: 1px solid #ffd84d;
 }
 
-/* === PROMPT AREA === */
+/* TEXTAREA */
 textarea {
   width: 100%;
   height: 420px;
-  resize: none;
-  padding: 16px;
+  background: #0d0d0d;
   border-radius: 14px;
-  background: rgba(0,0,0,0.5);
-  border: 1px solid var(--border);
-  color: #f1f1f1;
-  font-size: 13px;
-  line-height: 1.5;
+  border: none;
+  padding: 18px;
+  color: #fff;
+  resize: none;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* MOBILE RESPONSIVE (EKLENEN KISIM) */
+@media (max-width: 768px) {
+
+  .wrapper {
+    padding: 40px 18px;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  textarea {
+    height: 300px;
+    font-size: 14px;
+  }
+
+  button {
+    padding: 16px;
+    font-size: 15px;
+  }
+
+  /* mobilde parallax sakin */
+  .bg {
+    transform: scale(1.05) !important;
+  }
 }
 </style>
 </head>
@@ -142,103 +167,93 @@ textarea {
     <div class="panel">
       <h2>Prompt Options</h2>
 
-      <label>Camera / View</label>
-      <select id="camera">
-        <option value="">— none —</option>
-        <option value="top">Top-down view</option>
-        <option value="left">Left-side view</option>
-        <option value="right">Right-side view</option>
-        <option value="low">Low angle (base aligned)</option>
-        <option value="wide">Wide shot</option>
-        <option value="macro">Extreme close-up</option>
-      </select>
+      <div class="option-group">
+        <label>Kamera Pozisyonu</label>
+        <select id="camera">
+          <option value="">Seçilmedi</option>
+          <option value="top view, studio product photography">Kuşbakışı</option>
+          <option value="camera positioned to the right side of the product">Sağdan çekim</option>
+          <option value="camera positioned to the left side of the product">Soldan çekim</option>
+          <option value="extreme close-up macro product shot">Ultra yakın plan (macro)</option>
+          <option value="wide shot, product small in frame">Uzak plan</option>
+          <option value="camera aligned at object base level">Alt hizalı sıfır seviye</option>
+        </select>
+      </div>
 
-      <label>Lens</label>
-      <select id="lens">
-        <option value="">— none —</option>
-        <option value="product">Product photography lens</option>
-        <option value="macro">Macro lens</option>
-        <option value="blur">Shallow depth of field</option>
-      </select>
+      <div class="option-group">
+        <label>Lens & Kamera</label>
+        <select id="lens">
+          <option value="">Seçilmedi</option>
+          <option value="professional product photography lens, shallow depth of field">Ürün lensi (blur arkaplan)</option>
+          <option value="macro lens used for texture detail">Macro detay lens</option>
+          <option value="vintage 1930s camera lens characteristics">Retro 1930s lens</option>
+          <option value="modern full-frame DSLR commercial camera">Modern reklam kamerası</option>
+        </select>
+      </div>
 
-      <label>Lighting</label>
-      <select id="light">
-        <option value="">— none —</option>
-        <option value="studio">Studio spotlight</option>
-        <option value="natural">Natural professional light</option>
-      </select>
+      <div class="option-group">
+        <label>Efekt & Atmosfer</label>
+        <select id="effect">
+          <option value="">Seçilmedi</option>
+          <option value="studio spotlight lighting, premium commercial look">Spot ışıklı stüdyo</option>
+          <option value="dramatic black and white, low saturation, film grain">Dramatik siyah beyaz</option>
+          <option value="cinematic color grading, soft contrast">Sinematik renk</option>
+          <option value="retro color fade, warm tones, analog noise">Retro analog efekt</option>
+          <option value="natural light, professional camera look">Doğal ortam pro çekim</option>
+        </select>
+      </div>
 
-      <label>Style / Effect</label>
-      <select id="style">
-        <option value="">— none —</option>
-        <option value="cinematic">Cinematic</option>
-        <option value="bw">Black & White</option>
-        <option value="retro">1930s Retro</option>
-      </select>
-
-      <button onclick="buildPrompt()">Prompt Oluştur</button>
-      <button onclick="copyPrompt()">Promptu Kopyala</button>
+      <button onclick="generatePrompt()">Prompt Oluştur</button>
     </div>
 
     <!-- RIGHT PANEL -->
     <div class="panel">
       <h2>Generated Prompt</h2>
       <textarea id="output" readonly></textarea>
+      <button class="secondary" onclick="copyPrompt()">Promptu Kopyala</button>
     </div>
 
   </div>
 </div>
 
 <script>
-/* === PARALLAX === */
-document.addEventListener("mousemove", e => {
-  const x = (e.clientX / window.innerWidth - 0.5) * 10;
-  const y = (e.clientY / window.innerHeight - 0.5) * 10;
+/* PARALLAX */
+document.addEventListener("mousemove", (e) => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 20;
+  const y = (e.clientY / window.innerHeight - 0.5) * 20;
   document.getElementById("bg").style.transform =
-    `scale(1.08) translate(${x}px, ${y}px)`;
+    `translate(${x}px, ${y}px) scale(1.1)`;
 });
 
-/* === PROMPT BUILDER === */
-function buildPrompt() {
-  let prompt = `
-Use this image as reference.
-
-Keep the same product and packaging.
-All text and logos must remain readable.
-
-Ultra high-resolution, 8K quality.
-Professional commercial photography.
-`;
+/* PROMPT BUILDER */
+function generatePrompt() {
 
   const camera = document.getElementById("camera").value;
   const lens = document.getElementById("lens").value;
-  const light = document.getElementById("light").value;
-  const style = document.getElementById("style").value;
+  const effect = document.getElementById("effect").value;
 
-  if (camera === "top") prompt += "\nTop-down view.\nThe camera looks directly down at the product.\n";
-  if (camera === "left") prompt += "\nLeft-side view of the product.\n";
-  if (camera === "right") prompt += "\nRight-side view of the product.\n";
-  if (camera === "low") prompt += "\nLow angle shot.\nThe camera is aligned with the base of the product.\n";
-  if (camera === "wide") prompt += "\nWide shot.\nThe product appears smaller in frame.\n";
-  if (camera === "macro") prompt += "\nExtreme close-up.\nSurface textures are clearly visible.\n";
+  const basePrompt = `
+Ultra HD 8K professional product photography.
+The product remains exactly the same in shape, material, text, logo, packaging and physical structure.
+All typography, labels and surface details must remain perfectly readable and unchanged.
+Only the camera position, lens characteristics and visual atmosphere are altered.
+Clean studio background, premium commercial quality.
+`.trim();
 
-  if (lens === "product") prompt += "\nShot with a professional product photography lens.\n";
-  if (lens === "macro") prompt += "\nMacro lens photography.\nShallow depth of field.\n";
-  if (lens === "blur") prompt += "\nShallow depth of field.\nBackground softly blurred.\n";
+  const finalPrompt = [
+    basePrompt,
+    camera,
+    lens,
+    effect
+  ].filter(Boolean).join(", ");
 
-  if (light === "studio") prompt += "\nStudio lighting.\nFocused spotlight on the product.\nSoft shadows.\n";
-  if (light === "natural") prompt += "\nNatural lighting.\nHigh-end commercial photography.\n";
-
-  if (style === "cinematic") prompt += "\nCinematic color grading.\nBalanced contrast.\n";
-  if (style === "bw") prompt += "\nBlack and white photography.\nSubtle film grain.\nHigh contrast.\n";
-  if (style === "retro") prompt += "\n1930s vintage photography style.\nVisible film grain.\nSlight color fade.\n";
-
-  document.getElementById("output").value = prompt.trim();
+  document.getElementById("output").value = finalPrompt;
 }
 
+/* COPY */
 function copyPrompt() {
-  const area = document.getElementById("output");
-  area.select();
+  const textarea = document.getElementById("output");
+  textarea.select();
   document.execCommand("copy");
 }
 </script>
